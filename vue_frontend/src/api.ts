@@ -16,7 +16,7 @@ export const api = {
     params.append('username', username);
     params.append('password', password);
 
-    return axios.post(`${apiUrl}/api/token`, params);
+    return axios.post(`${apiUrl}/api/token/`, params);
   },
   async getMe(token: string) {
     return axios.get<IUserProfile>(`${apiUrl}/api/users/me`, authHeaders(token));
