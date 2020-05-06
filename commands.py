@@ -61,7 +61,7 @@ def black():
 @typer_cli
 def coverage():
     commands = [
-        "coverage run --source cast --branch runtests.py tests",
+        "coverage run --source apps --branch -m pytest .",
         "coverage report -m",
         "coverage html",
     ]
