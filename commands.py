@@ -39,15 +39,6 @@ def run_command(command, debug=False, cwd=None, env=None):
 
 
 @typer_cli
-def test(test_path: str = typer.Argument(None)):
-    command = "python runtests.py"
-    if test_path is None:
-        test_path = "tests"
-    command = f"{command} {test_path}"
-    run_command(command, debug=True)
-
-
-@typer_cli
 def pytest(test_path: str = typer.Argument(None)):
     command = "pytest"
     if test_path is not None:

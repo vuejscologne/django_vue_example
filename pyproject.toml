@@ -63,7 +63,7 @@ coreapi-cli = "^1.0"
 django-debug-toolbar = "^2.2"
 
 [tool.poetry.scripts]
-test = "commands:test"
+test = "commands:pytest"
 lint = "commands:flake8"
 autoformat = "commands:black"
 show_coverage = "commands:coverage"
