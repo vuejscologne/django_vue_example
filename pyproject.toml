@@ -70,7 +70,6 @@ autoformat = "commands:black"
 show_coverage = "commands:coverage"
 docs = "commands:docs"
 notebook = "commands:notebook"
-clean-build = "commands:clean_build"
 clean-pyc = "commands:clean_pyc"
 clean = "commands:clean"
 
