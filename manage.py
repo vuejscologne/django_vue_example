@@ -24,8 +24,8 @@ if __name__ == "__main__":
         raise
 
     # This allows easy placement of apps within the interior
-    # django_vue_test directory.
+    # apps directory.
     current_path = Path(__file__).parent.resolve()
-    sys.path.append(str(current_path / "django_vue_test"))
+    sys.path.append(str(current_path / "apps"))
 
     execute_from_command_line(sys.argv)

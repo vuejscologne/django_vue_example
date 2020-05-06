@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from django_vue_test.users.models import User
+from apps.users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,8 +1,8 @@
 import pytest
 from django.test import RequestFactory
 
-from django_vue_test.users.models import User
-from django_vue_test.users.views import UserRedirectView, UserUpdateView
+from apps.users.models import User
+from apps.users.views import UserRedirectView, UserUpdateView
 
 pytestmark = pytest.mark.django_db
 

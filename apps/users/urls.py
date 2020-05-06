@@ -1,6 +1,6 @@
 from django.urls import path
 
-from django_vue_test.users.views import (
+from apps.users.views import (
     user_detail_view,
     user_redirect_view,
     user_update_view,

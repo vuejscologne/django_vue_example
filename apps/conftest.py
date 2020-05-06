@@ -1,7 +1,7 @@
 import pytest
 
-from django_vue_test.users.models import User
-from django_vue_test.users.tests.factories import UserFactory
+from apps.users.models import User
+from apps.users.tests.factories import UserFactory
 
 
 @pytest.fixture(autouse=True)

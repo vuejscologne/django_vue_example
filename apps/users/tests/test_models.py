@@ -1,6 +1,6 @@
 import pytest
 
-from django_vue_test.users.models import User
+from apps.users.models import User
 
 pytestmark = pytest.mark.django_db
 

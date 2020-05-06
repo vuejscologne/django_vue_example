@@ -6,8 +6,8 @@ from pathlib import Path
 import environ
 
 ROOT_DIR = Path(__file__).parents[2]
-# django_vue_test/)
-APPS_DIR = ROOT_DIR / "django_vue_test"
+# apps/)
+APPS_DIR = ROOT_DIR / "apps"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -76,7 +76,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "django_vue_test.users.apps.UsersConfig",
+    "apps.users.apps.UsersConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -85,7 +85,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "django_vue_test.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "apps.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "django_vue_test.utils.context_processors.settings_context",
+                "apps.utils.context_processors.settings_context",
             ],
         },
     }
@@ -265,9 +265,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "django_vue_test.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "apps.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "django_vue_test.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "apps.users.adapters.SocialAccountAdapter"
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
