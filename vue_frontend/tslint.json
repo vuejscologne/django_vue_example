@@ -15,6 +15,7 @@
     "interface-name": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,
+    "no-console": false,
     "no-consecutive-blank-lines": false
   }
 }
