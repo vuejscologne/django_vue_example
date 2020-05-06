@@ -76,6 +76,7 @@ clean = "commands:clean"
 
 [tool.black]
 exclude = "migrations"
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
