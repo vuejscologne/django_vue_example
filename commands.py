@@ -48,7 +48,7 @@ def pytest(test_path: str = typer.Argument(None)):
 
 @typer_cli
 def flake8():
-    command = "flake8 cast tests"
+    command = "flake8 apps"
     run_command(command, debug=True)
 
 
