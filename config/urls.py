@@ -9,6 +9,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from rest_framework.schemas import get_schema_view
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -30,6 +31,23 @@ urlpatterns += [
     # DRF auth token
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # openapi schema
+    path(
+        "openapi",
+        get_schema_view(
+            title="Your Project", description="API for all things …", version="1.0.0"
+        ),
+        name="openapi-schema",
+    ),
+    # swagger
+    path(
+        "swagger-ui/",
+        TemplateView.as_view(
+            template_name="swagger-ui.html",
+            extra_context={"schema_url": "openapi-schema"},
+        ),
+        name="swagger-ui",
+    ),
 ]
 
 if settings.DEBUG:
