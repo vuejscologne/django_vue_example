@@ -19,16 +19,16 @@ export const api = {
     return axios.post(`${apiUrl}/api/token/`, params);
   },
   async getMe(token: string) {
-    return axios.get<IUserProfile>(`${apiUrl}/api/users/me`, authHeaders(token));
+    return axios.get<IUserProfile>(`${apiUrl}/api/users/me/`, authHeaders(token));
   },
   async updateMe(token: string, data: IUserProfileUpdate) {
-    return axios.put<IUserProfile>(`${apiUrl}/api/users/me`, data, authHeaders(token));
+    return axios.put<IUserProfile>(`${apiUrl}/api/users/me/`, data, authHeaders(token));
   },
   async getUsers(token: string) {
     return axios.get<IUserProfile[]>(`${apiUrl}/api/users/`, authHeaders(token));
   },
   async updateUser(token: string, userId: number, data: IUserProfileUpdate) {
-    return axios.put(`${apiUrl}/api/users/${userId}`, data, authHeaders(token));
+    return axios.put(`${apiUrl}/api/users/${userId}/`, data, authHeaders(token));
   },
   async createUser(token: string, data: IUserProfileCreate) {
     return axios.post(`${apiUrl}/api/users/`, data, authHeaders(token));
