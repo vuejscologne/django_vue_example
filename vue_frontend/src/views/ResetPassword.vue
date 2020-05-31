@@ -44,10 +44,6 @@ export default class UserProfileEdit extends Vue {
   public password1 = '';
   public password2 = '';
 
-  public mounted() {
-    this.checkToken();
-  }
-
   public reset() {
     this.password1 = '';
     this.password2 = '';
@@ -58,26 +54,10 @@ export default class UserProfileEdit extends Vue {
     this.$router.push('/');
   }
 
-  public checkToken() {
-    const token = (this.$router.currentRoute.query.token as string);
-    if (!token) {
-      commitAddNotification(this.$store, {
-        content: 'No token provided in the URL, start a new password recovery',
-        color: 'error',
-      });
-      this.$router.push('/recover-password');
-    } else {
-      return token;
-    }
-  }
-
   public async submit() {
     if (await this.$validator.validateAll()) {
-      const token = this.checkToken();
-      if (token) {
-        await dispatchResetPassword(this.$store, { token, password: this.password1 });
-        this.$router.push('/');
-      }
+      await dispatchResetPassword(this.$store, { password: this.password1 });
+      this.$router.push('/');
     }
   }
 }

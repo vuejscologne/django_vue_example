@@ -13,7 +13,7 @@ type MainContext = ActionContext<AdminState, State>;
 export const actions = {
     async actionGetUsers(context: MainContext) {
         try {
-            const response = await api.getUsers(context.rootState.main.token);
+            const response = await api.getUsers();
             if (response) {
                 commitSetUsers(context, response.data);
             }
@@ -26,7 +26,7 @@ export const actions = {
             const loadingNotification = { content: 'saving', showProgress: true };
             commitAddNotification(context, loadingNotification);
             const response = (await Promise.all([
-                api.updateUser(context.rootState.main.token, payload.id, payload.user),
+                api.updateUser(payload.id, payload.user),
                 await new Promise((resolve, reject) => setTimeout(() => resolve(), 500)),
             ]))[0];
             commitSetUser(context, response.data);
@@ -41,7 +41,7 @@ export const actions = {
             const loadingNotification = { content: 'saving', showProgress: true };
             commitAddNotification(context, loadingNotification);
             const response = (await Promise.all([
-                api.createUser(context.rootState.main.token, payload),
+                api.createUser(payload),
                 await new Promise((resolve, reject) => setTimeout(() => resolve(), 500)),
             ]))[0];
             commitSetUser(context, response.data);

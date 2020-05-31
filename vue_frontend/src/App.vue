@@ -22,8 +22,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import NotificationsManager from '@/components/NotificationsManager.vue';
-import { readIsLoggedIn } from '@/store/main/getters';
-import { dispatchCheckLoggedIn } from '@/store/main/actions';
+import { api } from '@/api';
 
 @Component({
   components: {
@@ -33,11 +32,11 @@ import { dispatchCheckLoggedIn } from '@/store/main/actions';
 export default class App extends Vue {
 
   get loggedIn() {
-    return readIsLoggedIn(this.$store);
+    return api.loggedIn();
   }
 
   public async created() {
-    await dispatchCheckLoggedIn(this.$store);
+    // await dispatchCheckLoggedIn(this.$store);
   }
 }
 </script>
