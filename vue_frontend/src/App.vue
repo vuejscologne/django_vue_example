@@ -22,7 +22,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import NotificationsManager from '@/components/NotificationsManager.vue';
-import { api } from '@/api';
+import { getApiClient } from '@/api';
+
+const api = getApiClient();
 
 @Component({
   components: {

@@ -90,21 +90,20 @@ export class ApiClient {
 
   constructor() {
     const instance = axios.create(getConfig());
-    /*
     instance.interceptors.response.use(
-      function(response) {
+      (response) => {
         return response;
       },
-      function(error) {
+      (error) => {
+        /*
         if (error.response.status === 403) {
-          console.log("in interceptor error: ", error.response);
           // try to refresh token
           const token = localStorage.getItem(REFRESH_TOKEN_KEY);
           instance
             .post("token/refresh/", { refresh: token })
             .then(function(response) {
               console.log("success fetching refresh token: ", response);
-              api.setToken(response.data);
+              this.setToken(response.data);
             })
             .catch(function(error) {
               console.log("failed refresh token -> login: ", error);
@@ -114,10 +113,11 @@ export class ApiClient {
               router.push({ name: "Login" });
             });
         }
+        */
+        console.log('interceptor error: ', error);
         return Promise.reject(error);
-      }
+      },
     );
-    */
     this.instance = instance;
   }
 
@@ -180,32 +180,8 @@ export class ApiClient {
   }
 }
 
-export const api = new ApiClient();
-/*
-instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response.status === 403) {
-      console.log('in interceptor error: ', error.response);
-      // try to refresh token
-      const token = localStorage.getItem(REFRESH_TOKEN_KEY);
-      instance
-        .post('token/refresh/', { refresh: token })
-        .then((response) => {
-          console.log('success fetching refresh token: ', response);
-          api.setToken(response.data);
-        })
-        .catch((refreshError) => {
-          console.log('failed refresh token -> login: ', refreshError);
-          removeTokensFromLocalStorage();
-          // since refresh didn't work -> goto login
-          console.log('goto login..');
-          router.push({ name: 'Login' });
-        });
-    }
-    return Promise.reject(error);
-  },
-);
-*/
+export const getApiClient = () => {
+  return new ApiClient();
+};
+
+// export const api = new ApiClient();
