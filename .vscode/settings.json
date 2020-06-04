@@ -3,4 +3,6 @@
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
     "python.pythonPath": "/Users/jochen/.pyenv/versions/dvt/bin/python"
+    "prettier.useEditorConfig": false,
+    "prettier.singleQuote": true,
 }
