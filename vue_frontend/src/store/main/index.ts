@@ -4,8 +4,6 @@ import { actions } from './actions';
 import { MainState } from './state';
 
 const defaultState: MainState = {
-  isLoggedIn: null,
-  token: '',
   logInError: false,
   userProfile: null,
   dashboardMiniDrawer: false,
