@@ -34,4 +34,23 @@ describe('login', () => {
     api.setToken(token);
     expect(api.instance.defaults.headers['Authorization']).toEqual(`Bearer ${accessToken}`);
   });
+
+  /*
+  it('refreshes access token on expire', async () => {
+    const data: any = {
+      status: 403,
+      response: {
+        message: 'Request failed with status code 403',
+      }
+    }
+    //mockedAxios.get.mockImplementationOnce(() => Promise.resolve(data));
+    const errorMessage = 'Request failed with status code 403';
+    // mockedAxios.get.mockImplementationOnce(() => Promise.reject(data));
+    mockedAxios.get.mockImplementationOnce(() => Promise.reject(new Error(errorMessage)));
+    await expect(api.getMe()).rejects.toThrow(errorMessage);
+    // mockedAxios.get.mockImplementationOnce(() => Promise.reject(new Error(errorMessage)));
+    //const foo = await api.getMe();
+    //console.log('foo: ', foo);
+  });
+  */
 });
