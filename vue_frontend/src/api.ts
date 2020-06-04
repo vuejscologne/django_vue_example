@@ -119,7 +119,6 @@ export class ApiClient {
     );
     */
     this.instance = instance;
-    console.log('in constructor: ');
   }
 
   public async logInGetToken(username: string, password: string) {
@@ -128,12 +127,10 @@ export class ApiClient {
   }
 
   public loggedIn() {
-    console.log('loggedIn? ', this.instance.defaults.headers);
     return 'Authorization' in this.instance.defaults.headers;
   }
 
   public setToken(token) {
-    console.log('set token: ', token);
     addTokensToLocalStorage(token);
     this.instance.defaults.headers = {
       ...this.instance.defaults.headers,
@@ -142,7 +139,6 @@ export class ApiClient {
   }
 
   public logOut() {
-    console.log('api logout..');
     removeTokensFromLocalStorage();
   }
 
