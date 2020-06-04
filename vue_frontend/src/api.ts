@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { apiUrl } from '@/env';
-import router from './router';
+// import router from './router';
 import {
-  IUserProfile,
   IUserProfileUpdate,
   IUserProfileCreate,
 } from './interfaces';
@@ -86,6 +85,7 @@ export const api = {
 */
 
 export class ApiClient {
+  // eslint-disable-next-line
   private instance: any;
 
   constructor() {
@@ -163,12 +163,12 @@ export class ApiClient {
   }
 
   public async passwordRecovery(email: string) {
-    return this.instance.post('password-recovery/${email}');
+    return this.instance.post(`password-recovery/${email}`);
   }
 
   public async resetPassword(password: string) {
     return this.instance.post('reset-password/', {
-      // prettier-ignore
+      // eslint-disable-next-line
       new_password: password,
     });
   }
