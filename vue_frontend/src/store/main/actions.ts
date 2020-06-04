@@ -61,6 +61,7 @@ export const actions = {
         await dispatchRouteLogOut(context);
     },
     async actionUserLogOut(context: MainContext) {
+        api.logOut();
         await dispatchLogOut(context);
         commitAddNotification(context, { content: 'Logged out', color: 'success' });
     },
