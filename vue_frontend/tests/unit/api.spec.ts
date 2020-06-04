@@ -29,9 +29,9 @@ describe('login', () => {
   });
 
   it('setToken writes token to localStorage and sets authorization header', () => {
-    const access_token = 'access_token';
-    const token = {access: access_token, refresh: 'refresh_token'};
+    const accessToken = 'access_token';
+    const token = {access: accessToken, refresh: 'refresh_token'};
     api.setToken(token);
-    expect(api.instance.defaults.headers['Authorization']).toEqual(`Bearer ${access_token}`);
+    expect(api.instance.defaults.headers['Authorization']).toEqual(`Bearer ${accessToken}`);
   });
 });
