@@ -2,6 +2,7 @@
 Base settings to build other settings files upon.
 """
 from pathlib import Path
+from datetime import timedelta
 
 import environ
 
@@ -286,3 +287,9 @@ REST_FRAMEWORK = {
 
 # Cors
 CORS_ORIGIN_ALLOW_ALL = True
+
+# JWT
+# -------------------------------------------------------------------------------
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=600),
+}
