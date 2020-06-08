@@ -43,9 +43,15 @@ function getConfig() {
 export const _axios = axios.create(getConfig());
 
 // Add a response interceptor
-function refreshToken(token) {
+async function refreshToken(token) {
   console.log('refresh called - it should not be..');
   return _axios.post('token/refresh/', { refresh: token });
+}
+
+async function retryAfterRefresh(response, originalRequest) {
+  console.log('success fetching refresh token: ', response);
+  _api.setToken(response.data);
+  return _api._axios.request(originalRequest);
 }
 
 function okResponseInterceptor(response) {
@@ -54,19 +60,20 @@ function okResponseInterceptor(response) {
 
 function errorResponseInterceptor(error) {
   const { response } = error;
+  console.log('error interceptor original request: ', error.config);
   if (
     response.status === 403 &&
     response.data &&
     response.data.code === 'token_not_valid'
   ) {
     // try to refresh if authorization failed
-    // const originalRequest = error.config;
     console.log('in interceptor error trying to refresh: ', error.response);
     _api
       .refreshToken('refresh-token')
       .then((refreshResponse) => {
-        console.log('success fetching refresh token: ', refreshResponse);
-        return Promise.resolve(refreshResponse);
+        console.log('refreshed successfully: ', refreshResponse);
+        if (!error.config) return refreshResponse;
+        return _api.retryAfterRefresh(refreshResponse, error.config);
       })
       .catch((refreshError) => {
         console.log('failed refresh token -> login: ', refreshError);
@@ -85,8 +92,8 @@ function get(config) {
   return _axios.get(config);
 }
 
-function post(config) {
-  return _axios.post(config);
+function post(url, data) {
+  return _axios.post(url, data);
 }
 
 function put(config) {
@@ -95,11 +102,7 @@ function put(config) {
 
 // Api functions
 async function logInGetToken(username: string, password: string) {
-  const params = new URLSearchParams();
-  params.append('username', username);
-  params.append('password', password);
-
-  return axios.post(`${apiUrl}token/`, params);
+  return _api.post('token/', { username, password });
 }
 
 function logOut() {
@@ -148,15 +151,17 @@ async function resetPassword(password: string) {
   return _axios.post('reset-password/', {
     // prettier-ignore
     // eslint-disable-next-line
-    new_password: password,
+    new_password: password
   });
 }
 
 const _api = {
+  _axios,
   get,
   put,
   post,
   refreshToken,
+  retryAfterRefresh,
   errorResponseInterceptor,
   logInGetToken,
   logOut,
@@ -172,4 +177,3 @@ const _api = {
 };
 
 export default _api;
-
