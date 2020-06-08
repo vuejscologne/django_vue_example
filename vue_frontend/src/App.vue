@@ -22,9 +22,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import NotificationsManager from '@/components/NotificationsManager.vue';
-import { getApiClient } from '@/api';
 
-const api = getApiClient();
+import api from './api';
 
 @Component({
   components: {
@@ -34,6 +33,7 @@ const api = getApiClient();
 export default class App extends Vue {
 
   get loggedIn() {
+    // return this.$api.loggedIn();
     return api.loggedIn();
   }
 

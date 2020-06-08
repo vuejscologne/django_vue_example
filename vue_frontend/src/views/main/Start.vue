@@ -5,9 +5,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { store } from '@/store';
-import { getApiClient } from '@/api';
-
-const api = getApiClient();
+import api from '@/api';
 
 const startRouteGuard = async (to, from, next) => {
   if (api.loggedIn()) {

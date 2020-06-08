@@ -1,14 +1,12 @@
-import { getApiClient } from '@/api';
 import { ActionContext } from 'vuex';
 import { IUserProfileCreate, IUserProfileUpdate } from '@/interfaces';
+import api from '@/api';
 import { State } from '../state';
 import { AdminState } from './state';
 import { getStoreAccessors } from 'typesafe-vuex';
 import { commitSetUsers, commitSetUser } from './mutations';
 import { dispatchCheckApiError } from '../main/actions';
 import { commitAddNotification, commitRemoveNotification } from '../main/mutations';
-
-const api = getApiClient();
 
 type MainContext = ActionContext<AdminState, State>;
 

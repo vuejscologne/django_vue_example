@@ -1,10 +1,13 @@
+'use strict';
+
 import axios from 'axios';
 import { apiUrl } from '@/env';
-// import router from './router';
+
 import {
+  IUserProfile,
   IUserProfileUpdate,
   IUserProfileCreate,
-} from './interfaces';
+} from '@/interfaces';
 
 const TOKEN_PREFIX = 'test_api';
 const ACCESS_TOKEN_KEY = `${TOKEN_PREFIX}_access_token`;
@@ -37,151 +40,136 @@ function getConfig() {
   return config;
 }
 
-// const instance = axios.create(getConfig());
+export const _axios = axios.create(getConfig());
 
-/*
-export const api = {
-  async logInGetToken(username: string, password: string) {
-    const params = new URLSearchParams();
-    params.append('username', username);
-    params.append('password', password);
-
-    return axios.post(`${apiUrl}/api/token/`, params);
-  },
-  setToken(token) {
-    console.log('set token: ', token);
-    addTokensToLocalStorage(token);
-    instance.defaults.headers = authHeaderFromLocalStorage();
-  },
-  loggedIn() {
-    console.log('loggedIn? ', instance.defaults.headers);
-    return 'Authorization' in instance.defaults.headers;
-  },
-  async getMe() {
-    return axios.get<IUserProfile>('users/me/');
-  },
-  async updateMe(data: IUserProfileUpdate) {
-    return axios.put<IUserProfile>('users/me/', data);
-  },
-  async getUsers() {
-    return axios.get<IUserProfile[]>('users/');
-  },
-  async updateUser(userId: number, data: IUserProfileUpdate) {
-    return axios.put('users/${userId}/', data);
-  },
-  async createUser(data: IUserProfileCreate) {
-    return axios.post('users/', data);
-  },
-  async passwordRecovery(email: string) {
-    return axios.post('password-recovery/${email}');
-  },
-  async resetPassword(password: string) {
-    return axios.post('reset-password/', {
-      // prettier-ignore
-      new_password: password
-    });
-  },
-};
-*/
-
-export class ApiClient {
-  // eslint-disable-next-line
-  private instance: any;
-
-  constructor() {
-    const instance = axios.create(getConfig());
-    instance.interceptors.response.use(
-      (response) => {
-        return response;
-      },
-      (error) => {
-        /*
-        if (error.response.status === 403) {
-          // try to refresh token
-          const token = localStorage.getItem(REFRESH_TOKEN_KEY);
-          instance
-            .post("token/refresh/", { refresh: token })
-            .then(function(response) {
-              console.log("success fetching refresh token: ", response);
-              this.setToken(response.data);
-            })
-            .catch(function(error) {
-              console.log("failed refresh token -> login: ", error);
-              removeTokensFromLocalStorage();
-              // since refresh didn't work -> goto login
-              console.log("goto login..");
-              router.push({ name: "Login" });
-            });
-        }
-        */
-        console.log('interceptor error: ', error);
-        return Promise.reject(error);
-      },
-    );
-    this.instance = instance;
-  }
-
-  public async logInGetToken(username: string, password: string) {
-    const payload = { username, password };
-    return this.instance.post('token/', payload);
-  }
-
-  public loggedIn() {
-    return 'Authorization' in this.instance.defaults.headers;
-  }
-
-  public setToken(token) {
-    addTokensToLocalStorage(token);
-    this.instance.defaults.headers = {
-      ...this.instance.defaults.headers,
-      ...this.authHeaderFromLocalStorage(),
-    };
-  }
-
-  public logOut() {
-    removeTokensFromLocalStorage();
-  }
-
-  public async getMe() {
-    return this.instance.get('users/me/');
-  }
-
-  public async updateMe(data: IUserProfileUpdate) {
-    return this.instance.put('users/me/', data);
-  }
-
-  public async getUsers() {
-    return this.instance.get('users/');
-  }
-
-  public async updateUser(userId: number, data: IUserProfileUpdate) {
-    return this.instance.put('users/${userId}/', data);
-  }
-
-  public async createUser(data: IUserProfileCreate) {
-    return this.instance.post('users/', data);
-  }
-
-  public async passwordRecovery(email: string) {
-    return this.instance.post(`password-recovery/${email}`);
-  }
-
-  public async resetPassword(password: string) {
-    return this.instance.post('reset-password/', {
-      // eslint-disable-next-line
-      new_password: password,
-    });
-  }
-
-  private authHeaderFromLocalStorage() {
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-    if (!token) return null;
-    return { Authorization: `Bearer ${token}` };
-  }
+// Add a response interceptor
+function refreshToken(token) {
+  console.log('refresh called - it should not be..');
+  return _axios.post('token/refresh/', { refresh: token });
 }
 
-export const getApiClient = () => {
-  return new ApiClient();
+function okResponseInterceptor(response) {
+  return response;
+}
+
+function errorResponseInterceptor(error) {
+  const { response } = error;
+  if (
+    response.status === 403 &&
+    response.data &&
+    response.data.code === 'token_not_valid'
+  ) {
+    // try to refresh if authorization failed
+    // const originalRequest = error.config;
+    console.log('in interceptor error trying to refresh: ', error.response);
+    _api
+      .refreshToken('refresh-token')
+      .then((refreshResponse) => {
+        console.log('success fetching refresh token: ', refreshResponse);
+        return Promise.resolve(refreshResponse);
+      })
+      .catch((refreshError) => {
+        console.log('failed refresh token -> login: ', refreshError);
+      });
+  }
+  return Promise.reject(error);
+}
+
+_axios.interceptors.response.use(
+  okResponseInterceptor,
+  errorResponseInterceptor
+);
+
+// Wrap _axios
+function get(config) {
+  return _axios.get(config);
+}
+
+function post(config) {
+  return _axios.post(config);
+}
+
+function put(config) {
+  return _axios.put(config);
+}
+
+// Api functions
+async function logInGetToken(username: string, password: string) {
+  const params = new URLSearchParams();
+  params.append('username', username);
+  params.append('password', password);
+
+  return axios.post(`${apiUrl}token/`, params);
+}
+
+function logOut() {
+  removeTokensFromLocalStorage();
+}
+
+function setToken(token) {
+  console.log('set token: ', token);
+  addTokensToLocalStorage(token);
+  _axios.defaults.headers = {
+    ..._axios.defaults.headers,
+    ...authHeaderFromLocalStorage(),
+  };
+}
+
+function loggedIn() {
+  console.log('loggedIn? ', _axios.defaults.headers);
+  return 'Authorization' in _axios.defaults.headers;
+}
+
+async function getMe() {
+  return _axios.get<IUserProfile>('users/me/');
+}
+
+async function updateMe(data: IUserProfileUpdate) {
+  return _axios.put<IUserProfile>('users/me/', data);
+}
+
+async function getUsers() {
+  return _axios.get<IUserProfile[]>('users/');
+}
+
+async function updateUser(userId: number, data: IUserProfileUpdate) {
+  return _axios.put('users/${userId}/', data);
+}
+
+async function createUser(data: IUserProfileCreate) {
+  return _axios.post('users/', data);
+}
+
+async function passwordRecovery(email: string) {
+  return _axios.post('password-recovery/${email}');
+}
+
+async function resetPassword(password: string) {
+  return _axios.post('reset-password/', {
+    // prettier-ignore
+    // eslint-disable-next-line
+    new_password: password,
+  });
+}
+
+const _api = {
+  get,
+  put,
+  post,
+  refreshToken,
+  errorResponseInterceptor,
+  logInGetToken,
+  logOut,
+  setToken,
+  loggedIn,
+  getMe,
+  updateMe,
+  getUsers,
+  updateUser,
+  createUser,
+  passwordRecovery,
+  resetPassword,
 };
 
-// export const api = new ApiClient();
+export default _api;
+

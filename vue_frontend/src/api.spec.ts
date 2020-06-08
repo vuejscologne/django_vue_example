@@ -1,4 +1,4 @@
-import { _api as api } from './api';
+import api from './api';
 
 describe('apiPlugin', () => {
   afterAll(() => {
@@ -30,7 +30,7 @@ describe('apiPlugin', () => {
     };
     const error = { response: expiredResponse };
     expect(api.errorResponseInterceptor(error)).resolves.toEqual(
-      refreshedResponse
+      refreshedResponse,
     );
     expect(api.refreshToken).toHaveBeenCalledTimes(1);
   });

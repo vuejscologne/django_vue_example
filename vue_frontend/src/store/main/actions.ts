@@ -1,4 +1,4 @@
-import { getApiClient } from '@/api';
+import api from '@/api';
 import router from '@/router';
 import { AxiosError } from 'axios';
 import { getStoreAccessors } from 'typesafe-vuex';
@@ -13,7 +13,6 @@ import {
 import { AppNotification, MainState } from './state';
 
 type MainContext = ActionContext<MainState, State>;
-const api = getApiClient();
 
 export const actions = {
     async actionLogIn(context: MainContext, payload: { username: string; password: string }) {
