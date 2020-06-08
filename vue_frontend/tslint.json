@@ -17,6 +17,8 @@
     "no-console": false,
     "no-consecutive-blank-lines": false,
     "no-string-literal": false,
-    "curly": [true, "ignore-same-line"]
+    "curly": [true, "ignore-same-line"],
+    "variable-name": [true, "check-format", "allow-leading-underscore"],
+    "trailing-comma": [false, {}]
   }
 }
