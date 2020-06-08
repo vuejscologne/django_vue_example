@@ -1,7 +1,6 @@
-'use strict';
-
 import axios from 'axios';
 import { apiUrl } from '@/env';
+import jwtDecode from 'jwt-decode';
 
 import {
   IUserProfile,
@@ -111,6 +110,7 @@ function logOut() {
 
 function setToken(token) {
   console.log('set token: ', token);
+  console.log('decoded token: ', jwtDecode(token.access));
   addTokensToLocalStorage(token);
   _axios.defaults.headers = {
     ..._axios.defaults.headers,

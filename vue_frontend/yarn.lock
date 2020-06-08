@@ -6448,6 +6448,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jwt-decode@auth0/jwt-decode:
+  version "2.2.0"
+  resolved "https://codeload.github.com/auth0/jwt-decode/tar.gz/8999033052268a85c58f041e8102d192b5460e96"
+
 killable@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/killable/-/killable-1.0.1.tgz#4c8ce441187a061c7474fb87ca08e2a638194892"
