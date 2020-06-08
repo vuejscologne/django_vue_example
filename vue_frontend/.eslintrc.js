@@ -16,7 +16,7 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     camel_case: "off",
     "quotes": [2, "single", { "avoidEscape": true }],
-    "no-use-before-define": [0, {"functions": true, "classes": true}],
+    "no-use-before-define": ["error", {"variables": false, "functions": true, "classes": true}],
     "comma-dangle": [0, "always"],
   },
   overrides: [
