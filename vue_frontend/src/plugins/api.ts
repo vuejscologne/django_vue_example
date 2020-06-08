@@ -2,10 +2,46 @@
 
 import Vue from 'vue';
 import axios from 'axios';
+import { apiUrl } from '@/env';
 
-const config = {};
+import {
+  IUserProfile,
+  IUserProfileUpdate,
+  IUserProfileCreate,
+} from '../interfaces';
 
-const _axios = axios.create(config);
+const TOKEN_PREFIX = 'test_api';
+const ACCESS_TOKEN_KEY = `${TOKEN_PREFIX}_access_token`;
+const REFRESH_TOKEN_KEY = `${TOKEN_PREFIX}_refresh_token`;
+
+function authHeaderFromLocalStorage() {
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  if (!token) return null;
+  return { Authorization: `Bearer ${token}` };
+}
+
+function removeTokensFromLocalStorage() {
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+}
+
+function addTokensToLocalStorage(token) {
+  localStorage.setItem(ACCESS_TOKEN_KEY, token.access);
+  localStorage.setItem(REFRESH_TOKEN_KEY, token.refresh);
+}
+
+function getConfig() {
+  const config = {
+    baseURL: apiUrl,
+  };
+  const headers = authHeaderFromLocalStorage();
+  if (headers) {
+    config['headers'] = headers;
+  }
+  return config;
+}
+
+const _axios = axios.create(getConfig());
 
 // Add a response interceptor
 function refreshToken(token) {
@@ -58,12 +94,76 @@ function put(config) {
   return _axios.put(config);
 };
 
+// Api functions
+async function logInGetToken(username: string, password: string) {
+  const params = new URLSearchParams();
+  params.append('username', username);
+  params.append('password', password);
+
+  return axios.post(`${apiUrl}/api/token/`, params);
+}
+
+function setToken(token) {
+  console.log('set token: ', token);
+  addTokensToLocalStorage(token);
+  _axios.defaults.headers = {
+    ..._axios.defaults.headers,
+    ...authHeaderFromLocalStorage(),
+  }
+}
+
+function loggedIn() {
+  console.log('loggedIn? ', _axios.defaults.headers);
+  return 'Authorization' in _axios.defaults.headers;
+}
+
+async function getMe() {
+  return _axios.get<IUserProfile>('users/me/');
+}
+
+async function updateMe(data: IUserProfileUpdate) {
+  return _axios.put<IUserProfile>('users/me/', data);
+}
+
+async function getUsers() {
+  return _axios.get<IUserProfile[]>('users/');
+}
+
+async function updateUser(userId: number, data: IUserProfileUpdate) {
+  return _axios.put('users/${userId}/', data);
+}
+
+async function createUser(data: IUserProfileCreate) {
+  return _axios.post('users/', data);
+}
+
+async function passwordRecovery(email: string) {
+  return _axios.post('password-recovery/${email}');
+}
+
+async function resetPassword(password: string) {
+  return _axios.post('reset-password/', {
+    // prettier-ignore
+    new_password: password
+  });
+}
+
 export const _api = {
   get,
   put,
   post,
   refreshToken,
   errorResponseInterceptor,
+  logInGetToken,
+  setToken,
+  loggedIn,
+  getMe,
+  updateMe,
+  getUsers,
+  updateUser,
+  createUser,
+  passwordRecovery,
+  resetPassword,
 };
 
 declare const window: any;
