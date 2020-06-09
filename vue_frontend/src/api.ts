@@ -8,6 +8,7 @@ import {
   IUserProfileCreate,
 } from '@/interfaces';
 
+let _api: any = null;
 const TOKEN_PREFIX = 'test_api';
 const ACCESS_TOKEN_KEY = `${TOKEN_PREFIX}_access_token`;
 const REFRESH_TOKEN_KEY = `${TOKEN_PREFIX}_refresh_token`;
@@ -28,6 +29,21 @@ function addTokensToLocalStorage(token) {
   localStorage.setItem(REFRESH_TOKEN_KEY, token.refresh);
 }
 
+let inMemoryToken;
+function addTokensToLocalMemory(token) {
+  inMemoryToken = {
+    ...token,
+    expiry: jwtDecode(token.access).exp
+  };
+}
+
+function authHeaderFromLocalMemory() {
+  console.log('auth header from local memory: ', inMemoryToken);
+  if (!inMemoryToken) return null;
+  const token = inMemoryToken.access;
+  return { Authorization: `Bearer ${token}` };
+}
+
 function getConfig() {
   const config = {
     baseURL: apiUrl,
@@ -43,7 +59,6 @@ export const _axios = axios.create(getConfig());
 
 // Add a response interceptor
 async function refreshToken(token) {
-  console.log('refresh called - it should not be..');
   return _axios.post('token/refresh/', { refresh: token });
 }
 
@@ -59,8 +74,10 @@ function okResponseInterceptor(response) {
 
 function errorResponseInterceptor(error) {
   const { response } = error;
+  console.log('error response interceptor: ', error);
   console.log('error interceptor original request: ', error.config);
   if (
+    response.status &&
     response.status === 403 &&
     response.data &&
     response.data.code === 'token_not_valid'
@@ -108,14 +125,32 @@ function logOut() {
   removeTokensFromLocalStorage();
 }
 
+async function addRefreshCheck() {
+  const interval = 60;
+  setInterval(async () => {
+    console.log('refresh check: ', inMemoryToken, Math.round(new Date().getTime() / 1000));
+    if (inMemoryToken) {
+      const epoch = Math.round(new Date().getTime() / 1000);
+      if (inMemoryToken.expiry <= (epoch + interval)) {
+        console.log('refreshing token...');
+        const token = await refreshToken(inMemoryToken.refresh);
+        addTokensToLocalMemory(token);
+      }
+    }
+  }, interval * 1000);
+}
+
 function setToken(token) {
   console.log('set token: ', token);
   console.log('decoded token: ', jwtDecode(token.access));
-  addTokensToLocalStorage(token);
+  // addTokensToLocalStorage(token);
+  addTokensToLocalMemory(token);
   _axios.defaults.headers = {
     ..._axios.defaults.headers,
-    ...authHeaderFromLocalStorage(),
+    ...authHeaderFromLocalMemory(),
+    // ...authHeaderFromLocalStorage(),
   };
+  addRefreshCheck();
 }
 
 function loggedIn() {
@@ -155,7 +190,7 @@ async function resetPassword(password: string) {
   });
 }
 
-const _api = {
+_api = {
   _axios,
   get,
   put,
