@@ -59,6 +59,7 @@ export const _axios = axios.create(getConfig());
 
 // Add a response interceptor
 async function refreshToken(token) {
+  // delete _axios.defaults.headers.common['Authorization'];
   return _axios.post('token/refresh/', { refresh: token });
 }
 
@@ -74,8 +75,6 @@ function okResponseInterceptor(response) {
 
 function errorResponseInterceptor(error) {
   const { response } = error;
-  console.log('error response interceptor: ', error);
-  console.log('error interceptor original request: ', error.config);
   if (
     response.status &&
     response.status === 403 &&
@@ -85,7 +84,7 @@ function errorResponseInterceptor(error) {
     // try to refresh if authorization failed
     console.log('in interceptor error trying to refresh: ', error.response);
     _api
-      .refreshToken('refresh-token')
+      .refreshToken(inMemoryToken.refresh)
       .then((refreshResponse) => {
         console.log('refreshed successfully: ', refreshResponse);
         if (!error.config) return refreshResponse;
@@ -132,9 +131,8 @@ async function addRefreshCheck() {
     if (inMemoryToken) {
       const epoch = Math.round(new Date().getTime() / 1000);
       if (inMemoryToken.expiry <= (epoch + interval)) {
-        console.log('refreshing token...');
-        const token = await refreshToken(inMemoryToken.refresh);
-        addTokensToLocalMemory(token);
+        const response = await refreshToken(inMemoryToken.refresh);
+        addTokensToLocalMemory(response.data);
       }
     }
   }, interval * 1000);
@@ -154,7 +152,6 @@ function setToken(token) {
 }
 
 function loggedIn() {
-  console.log('loggedIn? ', _axios.defaults.headers);
   return 'Authorization' in _axios.defaults.headers;
 }
 

@@ -291,6 +291,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # JWT
 # -------------------------------------------------------------------------------
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=300),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=600),
     "REFRESH_TOKEN_LIFETIME": timedelta(seconds=900),
+    "ROTATE_REFRESH_TOKENS": True,
 }
